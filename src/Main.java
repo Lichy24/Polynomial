@@ -20,7 +20,7 @@ import myMath.Polynom;
 import myMath.StdDraw;
 
 
-public class M {
+public class Main {
 
 
 	public static void main(String[] args) {
