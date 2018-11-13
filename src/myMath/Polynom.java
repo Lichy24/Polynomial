@@ -29,11 +29,13 @@ public class Polynom implements Polynom_able{
 	public Polynom() {
 
 	}
-
 	/**
 	 * [Constructor] Create new Polynom from given String
 	 */
-	public void Polynom2(String str) {
+	/**
+	 * [Constructor] Create new Polynom from given String
+	 */
+	public Polynom(String str) {
 
 		//if null then stop
 		if(str == null)
@@ -45,26 +47,28 @@ public class Polynom implements Polynom_able{
 
 		try {
 
-			str = str.replaceAll(" ", "");
-			str = str.replaceAll("\\*", "");
+			str = str.replaceAll(" ", ""); // delete spaces
+			str = str.replaceAll("\\*", ""); // remove '*'
 			
 			
 			while(!str.isEmpty()) {
-				int pl_ind = str.indexOf('+');
+				//get indexes of arithmetic operators
+				int pl_ind = str.indexOf('+'); 
 				int mi_ind = str.indexOf('-');
 
-				int op_ind;
+				int op_ind; // the closest arithmetic operator
 
+				//the first operator
 				if(str.charAt(0) == '+' || str.charAt(0) == '-')
 					op_ind = 0;
 				else
 					op_ind = -1;
 
-
+				// find the next operator.
 				pl_ind = str.indexOf('+', op_ind+1);
 				mi_ind = str.indexOf('-', op_ind+1);
 
-				int next_op_ind;
+				int next_op_ind; // the next operator
 
 				if(pl_ind == -1 && mi_ind == -1)
 					next_op_ind = str.length();
@@ -86,7 +90,7 @@ public class Polynom implements Polynom_able{
 
 	}
 	
-	public Polynom(String s){//long code but simple used regex to do string validation and manipulation
+	/*public Polynom(String s){//long code but simple used regex to do string validation and manipulation
         String[] strings; // array of string for each mono
         String curr_str,coefficient_str,power_str,monom;// variables
         double coefficient;
@@ -141,7 +145,7 @@ public class Polynom implements Polynom_able{
 	             case "-": return "-1";
 	         }
 	         return s;
-	    }
+	    }*/
 
 	/**
 	 * [Constructor] Create new Polynom object from given monoms
@@ -501,7 +505,8 @@ public class Polynom implements Polynom_able{
 
 
 	/**
-	 * calculating the area above x-axis of integral between x0 and x1, with number of parts to divide the area !!
+	 * calculating the area above x-axis of integral between x0 and x1, with number of parts to divide the area !! <br>
+	 * above x-axis.
 	 * @param x0 - the left border
 	 * @param x1 - the right border
 	 * @param parts - the amount of parts to divide the area
@@ -537,13 +542,19 @@ public class Polynom implements Polynom_able{
 		return result;
 	}
 
-	
+	/**
+	 * calculate the area between the x-axis and the area above the function in the negative y-axis.
+	 * @param x0 the range beginning
+	 * @param x1 the range ending
+	 * @param eps the max APPROXIMATE error rate.
+	 * @return
+	 */
 	public double areaNegativeX(double x0, double x1, double eps) {
-		int n = Math.abs((int)(((x1-x0)/eps)*(f(x1)-f(x0)))) + 1;// n = amount of intervals, n >= [(x1-x0)*(f(x1)-f(x0))]/eps
+		int n = Math.abs((int)(((x1-x0)/eps)*(f(x1)-f(x0)))) + 1;
 		double result = 0, interval = (x1-x0)/n, f;
 		
 
-		// calculate area for each rectangle with width of "Interval = (x1-x0)/n"
+		// calculate area for each rectangle with width of 
 		for(int i = 0 ; i < n ; i++) {
 			f = f(x0+interval*i);
 			if(f < 0)
@@ -553,55 +564,48 @@ public class Polynom implements Polynom_able{
 		return -result;
 	}
 	
-	public ArrayList<Double> roots(double x0, double x1, double eps) {
-		
-		ArrayList<Double> xs = new ArrayList<Double>();
-		double x=0;
-		if(f(x0)*f(x1) <0)
-		{
-			x=root(x0,x1,eps);
-			xs.add(x);
-			xs.addAll(roots(x+eps,x1,eps));
-			xs.addAll(roots(x0,x-eps,eps));
-		}
-		
-		return xs;
-		
-	}
-
+	/**
+	 * Opens up a Window panel with a drawing with the Polynom's graph representation. along with critical points.
+	 * @param x0
+	 * @param x1
+	 */
 	public void draw(double x0, double x1) {
-		double size = x1-x0;
-		double dist = 36;
-		int n = (int) (size*dist);
+		double size = x1-x0; // range
+		double dist = 36; // the precision, how many dots per x' unit
+		int n = (int) (size*dist); // total points to generate
 		
+		double maxy = 0; // max y value
 		double[] x = new double[n+1];
 		double[] y = new double[n+1];
-		for (int i = 0; i <= n; i++) {
+		for (int i = 0; i <= n; i++) { // plot data.
 			x[i] = (double)(x0+i/dist);
 			y[i] = f(x[i]);
+			
+			
+			if(y[i] > maxy)
+				maxy = y[i];
 		}
 
 		// rescale the coordinate system
-		StdDraw.setXscale(x0, x1);
-		StdDraw.setYscale(-size, size);
+		StdDraw.setCanvasSize(1200, 800); // size of window
+		StdDraw.setXscale(x0, x1); // graph X range
+		StdDraw.setYscale(-maxy, maxy); // graph Y range
 
 		StdDraw.setPenRadius(0.005);
 
 		// plot the approximation to the function
-		double maxy = 0;
+	
 		
 		for (int i = 0; i < n; i++) {
 			
-			StdDraw.line(x[i], y[i], x[i+1], y[i+1]);
-			
-			if(y[i] > maxy)
-				maxy = y[i];
+			StdDraw.line(x[i], y[i], x[i+1], y[i+1]); // connect the dots with lines.
+
 			
 			if(i>0 && i<n-1)
 			{
 				boolean min = ((y[i] < y[i-1]) && (y[i] < y[i+1]));
 				boolean max = ((y[i] > y[i-1]) && (y[i] > y[i+1]));
-				if(min || max)
+				if(min || max) // if critical point than color it
 				{
 					StdDraw.setPenRadius(0.01);
 					StdDraw.setPenColor(Color.red);
@@ -621,22 +625,28 @@ public class Polynom implements Polynom_able{
 			}
 
 		}
+		
+		// area GET THE NEGATIVE PARTS OF THE FUNCTION
 		String area = ""+areaNegativeX(x0, x1, 0.001);
-		StdDraw.text(x0+2, 7, "Area: "+area);
+		StdDraw.text(x0+2, maxy-5, "Area under X-axis: "+area);
 		
 		StdDraw.setPenRadius(0.002);
 
-		StdDraw.line(0, -maxy, 0, maxy);
-		StdDraw.line(-size, 0, size, 0);
+		//draw axises
+		StdDraw.line(0, -maxy, 0, maxy); //y axis
+		StdDraw.line(-size, 0, size, 0); //x axis
 
-		int d = (int) Math.log(size/2);
+		int d = (int) Math.ceil(maxy/10);
 		
-		for(int i =0 ; i< size ;i+=d) {
-			StdDraw.text(0.2, i, String.valueOf(i));
-			StdDraw.text(0.2, -i, String.valueOf(-i));
-
+		for(int i =0 ; i< size ;i+=1) {
 			StdDraw.text(i, 0.2, String.valueOf(i));
 			StdDraw.text(-i, 0.2, String.valueOf(-i));
+		}
+		
+		for(int i = 0 ; i< maxy; i+=d)
+		{
+			StdDraw.text(-0.1, i, String.valueOf(i));
+			StdDraw.text(-0.1, -i, String.valueOf(-i));
 		}
 		
 	}
