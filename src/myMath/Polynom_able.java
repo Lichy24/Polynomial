@@ -58,7 +58,7 @@ public interface Polynom_able extends cont_function{
 	 * @param p1
 	 * @return true iff this pulynom represents the same function ans p1
 	 */
-	public boolean equals (Polynom_able p1);
+	public boolean equals(Polynom_able p1);
 	/**
 	 * Test if this is the Zero Polynom
 	 * @return
@@ -89,7 +89,7 @@ public interface Polynom_able extends cont_function{
 	 * see: https://en.wikipedia.org/wiki/Riemann_integral
 	 * @return the approximated area above the x-axis below this Polynom and between the [x0,x1] range.
 	 */
-	public double area(double x0,double x1, double eps);
+	public double area(double x0, double x1, double eps);
 	/**
 	 * @return an Iterator (of Monoms) over this Polynom
 	 * @return
