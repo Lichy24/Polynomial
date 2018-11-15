@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import myMath.Monom;
 /**
  * This class represents a Polynom with add, multiply functionality, it also should support the following:
  * 1. Riemann's Integral: https://en.wikipedia.org/wiki/Riemann_integral
@@ -35,7 +34,7 @@ public class Polynom implements Polynom_able{
 	/**
 	 * [Constructor] Create new Polynom from given String
 	 */
-	public Polynom(String str) {
+	/*public Polynom(String str) {
 
 		//if null then stop
 		if(str == null)
@@ -89,50 +88,96 @@ public class Polynom implements Polynom_able{
 		}
 
 	}
+	*/
 	
-	/*public Polynom(String s){//long code but simple used regex to do string validation and manipulation
+	public Polynom(String s){//long code but simple used regex to do string validation and manipulation
         String[] strings; // array of string for each mono
         String curr_str,coefficient_str,power_str,monom;// variables
         double coefficient;
         int power;
 
         s = s.replaceAll("\\s","");//remove all type of break-space(\t,\n,white space) from polynomial
-        monom = "\\d*(\\.\\d*)?((?<=\\d)((\\*?)(?<=\\*)([xX])|([xX]?))|([xX]?)(?<=[xX])((\\^\\d+)?))?";
+        monom = "\\d*(\\.\\d*)?((?<=\\d)((\\*?)(?<=\\*)([xX](\\^\\d+)?)|([xX]?))|([xX]?)(?<=[xX])((\\^\\d+)?))?";
         Pattern pattern = Pattern.compile("^[+-]?"+monom+"([+-]"+monom+")*$");//same requests but after first monomial must have +/- sign.
         Matcher matcher = pattern.matcher(s);//checks if match regex
+	try {
+		if (matcher.matches()) {//check result
+			s = s.replaceAll("\\*", "");//remove multiply symbols from polynomial
+			s = singleSign(s);
+			s = s.replaceAll("-", "+-");// add common symbol to split polynomial.
+			s = s.toLowerCase();//lowercase all X to x so it will be synchronized
+			if (s.startsWith("+"))//if first character is plus it will add first index of spilt to be empty.
+				s = s.replaceFirst("\\+", "");
 
-        if (matcher.matches()){//check result
-            s = s.replaceAll("\\*","");//remove multiply symbols from polynomial
-            s = s.replaceAll("-","+-");// add common symbol to split polynomial.
-            s = s.toLowerCase();//lowercase all X to x so it will be synchronized
-            if (s.startsWith("+"))//if first character is plus it will add first index of spilt to be empty.
-                s = s.replaceFirst("\\+","");
+			strings = s.split("\\+");
+			for (int i = 0; i < strings.length; i++) {//loop for each monomial
+				curr_str = strings[i];
+				if (curr_str.compareTo("") != 0 && curr_str.compareTo("-") != 0) {
+					if (curr_str.contains("x")) {//if has x then default
+						coefficient_str = curr_str.substring(0, curr_str.indexOf('x'));//take coefficient
+						coefficient_str = coefficientAutoComplete(coefficient_str);//check for short such as (,-)
+						if (curr_str.contains("^")) {//exponent by...
+							power_str = curr_str.substring(curr_str.indexOf('^') + 1);
+						} else//if no exponent(ax) then 1
+							power_str = "1";
+					} else {
+						coefficient_str = coefficientAutoComplete(curr_str);
+						power_str = "0";
+					}
+					coefficient = Double.parseDouble(coefficient_str);//Double parser
+					power = Integer.parseInt(power_str);//Integer parser
+					add(new Monom(coefficient, power));//add Monomial
+				}
+			}
 
-            strings = s.split("\\+");
-            for (int i = 0; i < strings.length; i++) {//loop for each monomial
-                curr_str = strings[i];
-                if (curr_str.compareTo("") != 0 && curr_str.compareTo("-") != 0) {
-                    if (curr_str.contains("x")) {//if has x then default
-                        coefficient_str = curr_str.substring(0, curr_str.indexOf('x'));//take coefficient
-                        coefficient_str = shorts(coefficient_str);//check for short such as (,-)
-                        if (curr_str.contains("^")) {//exponent by...
-                            power_str = curr_str.substring(curr_str.indexOf('^') + 1);
-                        } else//if no exponent(ax) then 1
-                            power_str = "1";
-                    } else {
-                        coefficient_str = shorts(curr_str);
-                        power_str = "0";
-                    }
-                    coefficient = Double.parseDouble(coefficient_str);//Double parser
-                    power = Integer.parseInt(power_str);//Integer parser
-                    add(new Monom(coefficient, power));//add Monomial
-                }
-            }
-
-        }
+		} else throw new RuntimeException();
+	}
+		catch (Exception e) {
+			throw e;
+		}
     }
-	
-	   private String shorts(String s){//fix missing values for the parse
+	private String singleSign(String s){// trim mathematics signs
+		if (s.isEmpty()||(!s.contains("+")&&!s.contains("-")))//string empty or doesn't contains sign doesn't not need to be check.
+			return s;
+		boolean sign;//track for sign +/- -> true/false
+		int last;// current variable sign starting point of track
+		char[] c = s.toCharArray();// string -> char array
+		int count = c.length-1;//check from the end to the start.
+		if (s.endsWith("-")||s.endsWith("+"))//if has at end of string +/- will remove them until first number or x been reach.
+			while (count>0){
+				if (Character.isDigit(c[count])||Character.isAlphabetic(c[count])) {//end
+					s = s.substring(0, count + 1);//change string
+					break;
+				}
+				count--;
+			}
+		while (count>0){//check each variable signs
+			if(c[count]=='+'||c[count]=='-'){
+				sign = true;
+				last = count;
+				while (count>0){
+					if (Character.isDigit(c[count])||Character.isAlphabetic(c[count]))
+						break;
+					if (c[count]=='-')
+						sign = !sign;
+					count--;
+				}
+				if (sign)
+					if (count!=0)
+						s = s.substring(0,count+1)+"+"+s.substring(last+1);
+					else
+						s = s.substring(last+1);
+				else
+				if (count!=0)
+					s = s.substring(0,count+1)+"-"+s.substring(last+1);
+				else
+					s = "-"+s.substring(last+1);
+			}
+			count--;
+		}
+		return s;
+	}
+	   private String coefficientAutoComplete(String s){//fix missing values for the parse
 	         if (s.contains(".")) {
 	             if (s.startsWith("."))
 	                 return 0 + s;
@@ -145,7 +190,7 @@ public class Polynom implements Polynom_able{
 	             case "-": return "-1";
 	         }
 	         return s;
-	    }*/
+	    }
 
 	/**
 	 * [Constructor] Create new Polynom object from given monoms
