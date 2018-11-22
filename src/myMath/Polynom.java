@@ -576,12 +576,19 @@ public class Polynom implements Polynom_able{
 	 */
 	@Override
 	public double area(double x0, double x1, double eps) {
-		int n = Math.abs((int)(((x1-x0)/eps)*(f(x1)-f(x0)))) + 1;// n = amount of intervals, n >= [(x1-x0)*(f(x1)-f(x0))]/eps
+		double d = f(x1) - f(x0);
+		if(d==0) {
+			d=1;
+		}
+		
+		int n = Math.abs((int)(((x1-x0)/eps)*(d))) + 1;// n = amount of intervals, n >= [(x1-x0)*(f(x1)-f(x0))]/eps
 		double result = 0, interval = (x1-x0)/n;
 
 		// calculate area for each rectangle with witdh of "Interval = (x1-x0)/n"
 		for(int i = 0 ; i < n ; i++) {
-			result += f(x0+interval*i)*interval; // sum / sigma;
+			double f =f(x0+interval*i)*interval;
+			if(f(x0+interval*i)>0)
+				result +=f;  // sum / sigma;
 		}
 
 		return result;
@@ -595,7 +602,12 @@ public class Polynom implements Polynom_able{
 	 * @return
 	 */
 	public double areaNegativeX(double x0, double x1, double eps) {
-		int n = Math.abs((int)(((x1-x0)/eps)*(f(x1)-f(x0)))) + 1;
+		double d = f(x1) - f(x0);
+		if(d==0) {
+			d=1;
+		}
+		
+		int n = Math.abs((int)(((x1-x0)/eps)*(d))) + 1;
 		double result = 0, interval = (x1-x0)/n, f;
 		
 

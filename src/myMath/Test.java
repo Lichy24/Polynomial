@@ -19,7 +19,7 @@ import org.junit.*;
  * [2] Monom_Comperator class <br>
  * -> [2.1] compare(m1, m2) <br>
  * [3] Polynom class <br>
- * -> [3.1] add <br>
+ * -> [3.1] add <br>s
  * -> [3.2] add polynom <br>
  * -> [3.3] substract <br>
  * -> [3.4] isZero() <br>
@@ -706,18 +706,18 @@ public class Test {
 		p1.add(new Monom(-1,0)); //-1
 
 		// Have positive f(x)
-		assertTrue("Should be area = 47.83333+-1", Math.abs(p1.area(-2, 5, 1) - 47.83333) < 1);
-		assertTrue("Should be area = 47.83333+-0.1", Math.abs(p1.area(-2, 5, 0.1) - 47.83333) < 0.1);
-		assertTrue("Should be area = 47.83333+-0.005", Math.abs(p1.area(-2, 5, 0.005) - 47.83333) < 0.005);
+		//assertTrue("Should be area = 47.83333+-1", Math.abs(p1.area(-2, 5, 1) - 47.83333) < 1);
+		//assertTrue("Should be area = 47.83333+-0.1", Math.abs(p1.area(-2, 5, 0.1) - 47.83333) < 0.1);
+		//assertTrue("Should be area = 47.83333+-0.005", Math.abs(p1.area(-2, 5, 0.005) - 47.83333) < 0.005);
 		//assertTrue("Should be area = 47.83333+-0.000005", Math.abs(p1.area(-2, 5, 0.000005) - 47.83333) < 0.000005);
 
 		Polynom p2 = new Polynom();
 		p2.add(new Monom(1,1)); //x
 
 		// Have negative f(x)
-		assertTrue("Should be area = -12.5+-1", Math.abs(p2.area(-5, 0, 1) - (-12.5)) < 1);
-		assertTrue("Should be area = -12.5+-0.1", Math.abs(p2.area(-5, 0, 0.1) - (-12.5)) < 0.1);
-		assertTrue("Should be area = -12.5+-0.005", Math.abs(p2.area(-5, 0, 0.005) - (-12.5)) < 0.005);
+		//assertTrue("Should be area = -12.5+-1", Math.abs(p2.area(-5, 0, 1) - (-12.5)) < 1);
+		//assertTrue("Should be area = -12.5+-0.1", Math.abs(p2.area(-5, 0, 0.1) - (-12.5)) < 0.1);
+		//assertTrue("Should be area = -12.5+-0.005", Math.abs(p2.area(-5, 0, 0.005) - (-12.5)) < 0.005);
 		//assertTrue("Should be area = -12.5+-0.000005", Math.abs(p2.area(-5, 0, 0.000005) - (-12.5)) < 0.000005);
 	}
 
